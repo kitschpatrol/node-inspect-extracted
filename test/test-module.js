@@ -15,7 +15,8 @@ import('./fixture.mjs').then((m) => {
     [Symbol.stringTag]: 'Module',
   };
   assert.notStrictEqual(inspect(o), '[Module: null prototype] { default: 4 }');
-}, (e) => {
+}).catch((e) => {
   // Node 10 doesn't have import
+  // eslint-disable-next-line node-core/must-call-assert
   assert(e.message, 'Not supported');
 });
