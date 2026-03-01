@@ -31,7 +31,7 @@ const resolveTests = [
 resolveTests.forEach(([resolve, tests]) => {
   tests.forEach(([test, expected]) => {
     const actual = resolve.apply(null, test);
-    let actualAlt;
+    const actualAlt = undefined;
     const os = resolve === common.isWindows ? 'win32' : 'posix';
 
     const message =

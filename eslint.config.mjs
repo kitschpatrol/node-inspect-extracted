@@ -20,12 +20,9 @@ import nodeCore from './tools/eslint/eslint-plugin-node-core.js';
 const { globalIgnores } = await importEslintTool('eslint/config');
 const { default: js } = await importEslintTool('@eslint/js');
 const { default: babelEslintParser } = await importEslintTool('@babel/eslint-parser');
-const babelPluginProposalExplicitResourceManagement =
-  resolveEslintTool('@babel/plugin-proposal-explicit-resource-management');
-const babelPluginSyntaxImportAttributes = resolveEslintTool('@babel/plugin-syntax-import-attributes');
 const babelPluginSyntaxImportSource = resolveEslintTool('@babel/plugin-syntax-import-source');
 const { default: jsdoc } = await importEslintTool('eslint-plugin-jsdoc');
-const { default: markdown } = await importEslintTool('eslint-plugin-markdown');
+const { default: markdown } = await importEslintTool('@eslint/markdown');
 const { default: stylisticJs } = await importEslintTool('@stylistic/eslint-plugin');
 
 nodeCore.RULES_DIR = fileURLToPath(new URL('./tools/eslint-rules', import.meta.url));
@@ -115,8 +112,6 @@ export default [
         babelOptions: {
           parserOpts: { createImportExpressions: true },
           plugins: [
-            babelPluginProposalExplicitResourceManagement,
-            babelPluginSyntaxImportAttributes,
             babelPluginSyntaxImportSource,
           ],
         },
@@ -287,6 +282,8 @@ export default [
         wrapIndent: '  ',
       }],
       'jsdoc/check-alignment': 'error',
+      'jsdoc/reject-any-type': 'off',
+      'jsdoc/reject-function-type': 'off',
 
       // Stylistic rules.
       '@stylistic/js/arrow-parens': 'error',
@@ -308,6 +305,7 @@ export default [
         MemberExpression: 'off',
         ObjectExpression: 'first',
         SwitchCase: 1,
+        assignmentOperator: 'off',
       }],
       '@stylistic/js/key-spacing': 'error',
       '@stylistic/js/keyword-spacing': 'error',

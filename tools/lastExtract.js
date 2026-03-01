@@ -3,14 +3,14 @@
 // This file is generated from `node tools/check.js -u`
 // DO NOT MODIFY BY HAND
 module.exports = {
-  time: '2025-12-16T10:37:05.202Z',
+  time: '2026-03-01T18:13:45.136Z',
   files: [
     {
       name: 'eslint.config.mjs',
       local: 'eslint.config.mjs',
-      sha256: 'a467b9f29fe62b3fc69794c52eeff9e946537a2948e204cc6c09bc59575a182f',
-      mtime: '2025-08-16T12:56:09.658Z',
-      commit: '324d9fc9d4b3d9446fe3fbc48fb85b195fdf685c'
+      sha256: '8e8745f85d6f764eb92e8084901cd3a1d2f2d18520f4aee06914a7e05f43ea43',
+      mtime: '2026-02-28T22:27:59.917Z',
+      commit: 'b0ec8c9c2adbb4bf5bd9871a3b2b065a7c4a8dc6'
     },
     {
       name: 'lib/internal/per_context/primordials.js',
@@ -22,16 +22,16 @@ module.exports = {
     {
       name: 'lib/internal/util/inspect.js',
       local: 'src/inspect.js',
-      mtime: '2025-10-31T08:33:38.000Z',
-      sha256: '4bb92e83806997981ee7b57234d1d12048720d248f8f36755c80ab9008c62e05',
-      commit: '6877139a2dd84b4b1d94f8b6ba1e416cb26eb8bb'
+      mtime: '2026-02-28T22:27:59.940Z',
+      sha256: '5ed252de854ac3a0181f89233843d59301baf15f1b249c90f16fde5d70ddae7d',
+      commit: '1dd15c9502075b013dd1f30a9bf5165cb52600d0'
     },
     {
       name: 'test/common/index.js',
       local: 'test/common/index.js',
-      mtime: '2025-11-16T19:45:44.000Z',
-      sha256: '37b0499ba171ead6bde48cc09a3164da98a76c4d1b7f1372447a7258dedb49d7',
-      commit: 'a4dee613fdd1ec6c01211a8a66b99319b2abdd20'
+      mtime: '2026-02-28T22:27:59.978Z',
+      sha256: '663096f08fe2e365346370fbbb4691f3a5ddfead4d7235071651933cdd6bbc19',
+      commit: '150910da70c711658727fcd3d3667d5d5ec84bf7'
     },
     {
       name: 'test/common/tmpdir.js',
@@ -43,9 +43,9 @@ module.exports = {
     {
       name: 'test/eslint.config_partial.mjs',
       local: 'test/eslint.config_partial.mjs',
-      sha256: 'a7d7fd3abca11e3e198c34ce8e137eae7663ec8fe097d15522bc5eb6c3c59b3e',
-      mtime: '2025-11-07T16:22:01.000Z',
-      commit: '8cae858f885e0a445d9a191861d96ceaca48500f'
+      sha256: 'a4fcd8d32a0d059f3aa7333c751632fa45456e69f29cffa75bbddd8376b29c7f',
+      mtime: '2026-02-28T22:27:59.992Z',
+      commit: '73c0a242d763b089fc233c4a2bb178441c951554'
     },
     {
       name: 'test/parallel/test-primordials-apply.js',
@@ -99,9 +99,9 @@ module.exports = {
     {
       name: 'test/parallel/test-util-inspect.js',
       local: 'test/parallel/test-util-inspect.js',
-      sha256: '40dadfc85c23124b9618dce02e4118c0c874df9712b86292116d10e9a6c40acc',
-      mtime: '2025-10-31T08:33:38.000Z',
-      commit: '6877139a2dd84b4b1d94f8b6ba1e416cb26eb8bb'
+      sha256: 'f9ea2ed77e4d42a0b39c7bdc3d8c837b88fa41091ce6bde53998b13f0f3ebb14',
+      mtime: '2026-02-28T22:28:00.230Z',
+      commit: 'edf90ce457697c47305a0c15a81123c5f1488a78'
     },
     {
       name: 'tools/eslint-rules/alphabetize-errors.js',
@@ -282,22 +282,22 @@ module.exports = {
       name: 'tools/eslint/eslint.config_partial.mjs',
       local: 'tools/eslint/eslint.config_partial.mjs',
       sha256: '27d3a8d0882e5e0d5f8ab5dd43ba3bf003e0b8622bb3a0a3e05a9997cacdbfea',
-      mtime: '2025-04-19T14:46:57.379Z',
-      commit: 'd12ab0287c05d9828bc9addde4a63904147ef282'
+      mtime: '2025-03-07T14:52:52.000Z',
+      commit: '27f98c3cd1cee93efb28efea11d59e51ba9be4b9'
     },
     {
       name: 'tools/eslint/eslint.config_utils.mjs',
       local: 'tools/eslint/eslint.config_utils.mjs',
-      sha256: '67e7e6e8c4331a7a47f420be91c210128e29451d6809b285508cfdd7d3443337',
-      mtime: '2025-04-19T14:46:57.379Z',
-      commit: 'd12ab0287c05d9828bc9addde4a63904147ef282'
+      sha256: '28636ccb592de234078d95db0bd992a2342cb92c16b07b7c0830eb19bf508de4',
+      mtime: '2026-02-28T22:28:00.269Z',
+      commit: '24795530bb1c3600f3558fcae86a3c72192a1eae'
     },
     {
       name: 'tools/eslint/package.json',
       local: 'tools/eslint/package.json',
-      sha256: '381101f83c01874b89c18274544e2f444785f9aa862266d937f889cef6733bb1',
-      mtime: '2025-07-28T13:04:39.242Z',
-      commit: '191396260c122e341009f4f4be04baf4b10e666f'
+      sha256: '9c05ff2b17fbfc4212fcca1a731e6cb3a873e68b084929d5265e3374ff9a9440',
+      mtime: '2026-02-28T22:28:00.269Z',
+      commit: 'c8e58c56b9210fac031751fef616191465033acd'
     },
     {
       name: 'typings/primordials.d.ts',
