@@ -6,6 +6,7 @@ module.exports = {
   entry: './src/inspect.js',
   mode: 'production',
   output: {
+    // eslint-disable-next-line no-undef
     path: path.resolve(__dirname, 'dist'),
     filename: 'inspect.js',
     library: {
@@ -18,6 +19,7 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
+        // eslint-disable-next-line no-undef
         include: path.resolve(__dirname, 'src'),
         use: {
           loader: 'babel-loader',
