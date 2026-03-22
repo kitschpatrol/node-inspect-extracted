@@ -88,7 +88,7 @@ export default [
   js.configs.recommended,
   jsdoc.configs['flat/recommended'],
   {
-    files: ['**/*.{js,cjs}'],
+    files: ['**/*.js'],
     languageOptions: {
       // Specific to node-inspect-extracted
       globals: {
@@ -96,8 +96,7 @@ export default [
         module: 'readonly',
         __dirname: 'readonly',
       },
-      // The default is `commonjs` but it's not supported by the Babel parser.
-      sourceType: 'script',
+      sourceType: 'commonjs',
     },
   },
   {
@@ -110,7 +109,6 @@ export default [
       parser: babelEslintParser,
       parserOptions: {
         babelOptions: {
-          parserOpts: { createImportExpressions: true },
           plugins: [
             babelPluginSyntaxImportSource,
           ],
@@ -239,6 +237,7 @@ export default [
         ...noRestrictedSyntaxCommonLib,
       ],
       'no-self-compare': 'error',
+      'no-shadow-restricted-names': ['error', { reportGlobalThis: false }],
       'no-template-curly-in-string': 'error',
       'no-throw-literal': 'error',
       'no-undef': ['error', { typeof: true }],
@@ -266,6 +265,7 @@ export default [
 
       // ESLint recommended rules that we disable.
       'no-inner-declarations': 'off',
+      'no-useless-assignment': 'off',
 
       // JSDoc rules.
       'jsdoc/require-jsdoc': 'off',
