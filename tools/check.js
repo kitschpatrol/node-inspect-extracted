@@ -12,8 +12,22 @@ const LAST_EXTRACT_FILE = path.join(__dirname, 'lastExtract.js');
 const lastExtract = require(LAST_EXTRACT_FILE);
 
 const args = process.argv.slice(2);
+const help = args.includes('--help') || args.includes('-h');
 const update = args.includes('--update') || args.includes('-u');
 const diff = args.includes('--diff') || args.includes('-d');
+
+if (help) {
+  console.error(`\
+Usage: check.js [options]
+
+-d,--diff   Diff files in repo vs. what was last synced.
+-u,--update Update hashes to match latest.
+-h,--help   Show help.
+
+Default is to just show files with changes.
+`);
+  process.exit(64);
+}
 
 function c(str, color) {
   const [fg, reset] = util.inspect.colors[color];
