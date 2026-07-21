@@ -26,7 +26,7 @@
     "test:all": "nve --arch ${NVE_ARCH:-`node -e 'console.log(process.arch)'`} -p 14,16,18,20,22,24,25 node tools/runtests",
     "coverage": "c8 node tools/runtests",
     "preci": "npm run build && npm run lint",
-    "ci": "c8 nve --arch ${NVE_ARCH:-`node -e 'console.log(process.arch)'`} --no-progress -c -p 14,16,18,20,22,24,25 node tools/runtests"
+    "ci": "c8 nve --arch ${NVE_ARCH:-`node -e 'console.log(process.arch)'`} --no-progress -c -p 14,16,18,20,22,24,26 node tools/runtests"
   },
   "keywords": [
     "inspect",
@@ -48,31 +48,27 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@babel/core": "^8.0.0-rc.3",
-    "@babel/eslint-parser": "^8.0.0-rc.3",
-    "@babel/plugin-syntax-import-source": "^8.0.0-rc.3",
-    "@babel/preset-env": "^8.0.0-rc.3",
+    "@babel/core": "^8.0.1",
+    "@babel/eslint-parser": "^8.0.1",
+    "@babel/plugin-syntax-import-source": "^8.0.1",
+    "@babel/preset-env": "^8.0.2",
     "@eslint/js": "^10.0.1",
-    "@eslint/markdown": "^7.5.1",
+    "@eslint/markdown": "^8.0.3",
+    "@stylistic/eslint-plugin": "^5.10.0",
     "@stylistic/eslint-plugin-js": "^4.4.1",
     "babel-loader": "^10.1.1",
-    "baseline-browser-mapping": "^2.10.10",
-    "eslint": "^10.1.0",
-    "eslint-plugin-jsdoc": "^62.8.0",
-    "globals": "^17.4.0",
+    "baseline-browser-mapping": "^2.11.0",
+    "eslint": "^10.7.0",
+    "eslint-plugin-jsdoc": "^63.2.0",
+    "globals": "^17.7.0",
     "nve": "^18.0.3",
-    "semver": "^7.7.4",
-    "superc8": "^12.3.1",
-    "webpack": "^5.105.4",
-    "webpack-cli": "^7.0.2"
+    "semver": "^7.8.5",
+    "superc8": "^12.7.0",
+    "webpack": "^5.108.4",
+    "webpack-cli": "^7.2.1"
   },
-  "packageManager": "pnpm@10.32.1",
+  "packageManager": "pnpm@11.15.1",
   "engines": {
     "node": ">=14"
-  },
-  "pnpm": {
-    "overrides": {
-      "terser-webpack-plugin@5.3.16>serialize-javascript": "7.0.3"
-    }
   }
 }
