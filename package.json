@@ -50,7 +50,8 @@
   },
   "author": "Joe Hildebrand <joe-github@cursive.net>",
   "contributors": [
-    "Noah May <noahmouse2011@gmail.com>"
+    "Noah May <noahmouse2011@gmail.com>",
+    "Eric Mika <eric@ericmika.com>"
   ],
   "license": "MIT",
   "devDependencies": {
