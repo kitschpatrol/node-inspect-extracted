@@ -6,9 +6,14 @@
   "module": "./index.mjs",
   "browser": "./dist/inspect.js",
   "exports": {
-    "types": "./types/util.d.ts",
-    "import": "./index.mjs",
-    "require": "./dist/inspect.js"
+    "import": {
+      "types": "./types/util.d.mts",
+      "default": "./index.mjs"
+    },
+    "require": {
+      "types": "./types/util.d.ts",
+      "default": "./dist/inspect.js"
+    }
   },
   "types": "./types/util.d.ts",
   "files": [
@@ -20,6 +25,7 @@
     "check": "node tools/check",
     "lint": "eslint .",
     "build": "webpack",
+    "prepack": "npm run build",
     "pretest": "npm run build",
     "test": "node tools/runtests",
     "pretest:all": "npm run build",
