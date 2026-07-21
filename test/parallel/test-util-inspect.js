@@ -3577,6 +3577,21 @@ assert.strictEqual(
   // );
 }
 
+{
+  // A node_modules segment that is the last path component (no trailing
+  // separator after the module name) must not send markNodeModules into an
+  // infinite loop that exhausts the heap.
+  // https://github.com/nodejs/node/issues/64011
+  const err = new Error('boom');
+  err.stack = 'Error: boom\n    at /app/node_modules/foo.js:1:1';
+  const out = util.inspect(err, { colors: true });
+  assert.strictEqual(
+    out,
+    'Error: boom\n' +
+      '    at /app/node_modules/\x1B[4mfoo.js:1:1\x1B[24m',
+  );
+}
+
 // This starts to work in node 15
 if (semver.satisfies(process.version, '>=15')) {
   // Cross platform checks.
@@ -3978,6 +3993,7 @@ if (semver.satisfies(process.version, '>=15')) {
   assert.strictEqual(util.inspect(NaN), 'NaN');
   assert.strictEqual(util.inspect(Infinity), 'Infinity');
   assert.strictEqual(util.inspect(-Infinity), '-Infinity');
+  assert.strictEqual(util.inspect(-0), '-0');
 
   assert.strictEqual(
     util.inspect(new Float64Array([100_000_000])),
@@ -4009,6 +4025,9 @@ if (semver.satisfies(process.version, '>=15')) {
     '-123_456_789.123_456_78'
   );
 
+  // -0 should be formatted as '-0' even with numericSeparator enabled
+  assert.strictEqual(util.inspect(-0, { numericSeparator: true }), '-0');
+
   // Regression test for https://github.com/nodejs/node/issues/59376
   // numericSeparator should work correctly for negative fractional numbers
   {
@@ -4029,6 +4048,12 @@ if (semver.satisfies(process.version, '>=15')) {
       '-0.123_45'
     );
   }
+
+  // Numbers in scientific notation should not get malformed separators
+  assert.strictEqual(util.inspect(1e-7, { numericSeparator: true }), '1e-7');
+  assert.strictEqual(util.inspect(1.5e-10, { numericSeparator: true }), '1.5e-10');
+  assert.strictEqual(util.inspect(1.23e-100, { numericSeparator: true }), '1.23e-100');
+  assert.strictEqual(util.inspect(1.23456789e-12, { numericSeparator: true }), '1.23456789e-12');
 }
 
 // Regression test for https://github.com/nodejs/node/issues/41244

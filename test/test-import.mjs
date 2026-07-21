@@ -20,4 +20,4 @@ const p = new util.Proxy({ a: false }, {});
 assert.strictEqual(util.format('%%%o%%', p), '%Proxy [ { a: false }, {} ]%');
 assert.strictEqual(util.formatWithOptions({
   compact: false,
-}, '%O', p), '{\n  a: false\n}');
+}, '%O', p), 'Proxy({\n  a: false\n})');

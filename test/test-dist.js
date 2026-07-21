@@ -23,4 +23,4 @@ const p = new Proxy({ a: false }, {});
 assert.strictEqual(format('%%%o%%', p), '%Proxy [ { a: false }, {} ]%');
 assert.strictEqual(formatWithOptions({
   compact: false,
-}, '%O', p), '{\n  a: false\n}');
+}, '%O', p), 'Proxy({\n  a: false\n})');
