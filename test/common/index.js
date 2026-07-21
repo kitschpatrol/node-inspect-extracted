@@ -38,6 +38,7 @@ const tmpdir = require('./tmpdir');
 const bits = ['arm64', 'loong64', 'mips', 'mipsel', 'ppc64', 'riscv64', 's390x', 'x64']
   .includes(process.arch) ? 64 : 32;
 const hasIntl = !!process.config.variables.v8_enable_i18n_support;
+const hasTemporal = !!process.config.variables.v8_enable_temporal_support;
 
 // small-icu doesn't support non-English locales
 const hasFullICU = (() => {
@@ -84,8 +85,16 @@ const hasCrypto = Boolean(process.versions.openssl) &&
 
 const hasInspector = Boolean(process.features.inspector);
 const hasSQLite = Boolean(process.versions.sqlite);
+const hasFFI = Boolean(process.config.variables.node_use_ffi);
 
 const hasQuic = hasCrypto && !!process.features.quic;
+
+const hasLocalStorage = (() => {
+  // Check enumerable property to avoid triggering the getter which emits a warning.
+  // localStorage is enumerable only when --localstorage-file is provided.
+  const desc = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+  return hasSQLite && desc?.enumerable === true;
+})();
 
 /**
  * Parse test metadata from the specified file.
@@ -397,8 +406,10 @@ if (hasCrypto) {
   knownGlobals.add(globalThis.SubtleCrypto);
 }
 
-if (hasSQLite) {
+if (hasLocalStorage) {
   knownGlobals.add(globalThis.localStorage);
+}
+if (hasSQLite) {
   knownGlobals.add(globalThis.sessionStorage);
 }
 
@@ -424,6 +435,11 @@ if (process.env.NODE_TEST_KNOWN_GLOBALS !== '0') {
       // globalThis.crypto is a getter that throws if Node.js was compiled
       // without OpenSSL so we'll skip it if it is not available.
       if (val === 'crypto' && !hasCrypto) {
+        continue;
+      }
+      // globalThis.localStorage is a getter that throws if Node.js was
+      // executed without a --localstorage-file path.
+      if (val === 'localStorage' && !hasLocalStorage) {
         continue;
       }
       if (!knownGlobals.has(globalThis[val])) {
@@ -766,6 +782,12 @@ function skipIfSQLiteMissing() {
   }
 }
 
+function skipIfFFIMissing() {
+  if (!hasFFI) {
+    skip('missing FFI');
+  }
+}
+
 function getArrayBufferViews(buf) {
   const { buffer, byteOffset, byteLength } = buf;
 
@@ -940,14 +962,36 @@ function expectRequiredModule(mod, expectation, checkESModule = true) {
   assert.deepStrictEqual(clone, { ...expectation });
 }
 
-function expectRequiredTLAError(err) {
+// Extract the entries of the rendered "Require stack:" list (each shown as
+// "- <path>") from an error message or a process output string.
+function expectRequireStack(output, expected) {
+  const lines = output.replace(/\r/g, '').split('\n');
+  const start = lines.indexOf('Require stack:');
+  if (start === -1) {
+    assert.deepStrictEqual([], expected);
+    return;
+  }
+  const stack = [];
+  for (let i = start + 1; i < lines.length && lines[i].startsWith('- '); i++) {
+    stack.push(lines[i].slice(2));
+  }
+  assert.deepStrictEqual(stack, expected);
+}
+
+function expectRequiredTLAError(err, stack) {
   const message = /require\(\) cannot be used on an ESM graph with top-level await/;
   if (typeof err === 'string') {
     assert.match(err, /ERR_REQUIRE_ASYNC_MODULE/);
     assert.match(err, message);
+    if (stack) {
+      expectRequireStack(err, stack);
+    }
   } else {
     assert.strictEqual(err.code, 'ERR_REQUIRE_ASYNC_MODULE');
     assert.match(err.message, message);
+    if (stack) {
+      assert.deepStrictEqual(err.requireStack, stack);
+    }
   }
 }
 
@@ -980,11 +1024,14 @@ const common = {
   getBufferSources,
   getTTYfd,
   hasIntl,
+  hasTemporal,
   hasFullICU,
   hasCrypto,
   hasQuic,
   hasInspector,
   hasSQLite,
+  hasFFI,
+  hasLocalStorage,
   invalidArgTypeHelper,
   isAlive,
   isASan,
@@ -994,6 +1041,7 @@ const common = {
   isOpenBSD,
   isMacOS,
   isPi,
+  isRiscv64,
   isSunOS,
   isWindows,
   localIPv6Hosts,
@@ -1004,6 +1052,7 @@ const common = {
   mustSucceed,
   nodeProcessAborted,
   PIPE,
+  expectRequireStack,
   parseTestMetadata,
   platformTimeout,
   printSkipMessage,
@@ -1015,6 +1064,7 @@ const common = {
   skipIf32Bits,
   skipIfEslintMissing,
   skipIfInspectorDisabled,
+  skipIfFFIMissing,
   skipIfSQLiteMissing,
   spawnPromisified,
   sleepSync,

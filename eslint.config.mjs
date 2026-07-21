@@ -21,7 +21,9 @@ const { globalIgnores } = await importEslintTool('eslint/config');
 const { default: js } = await importEslintTool('@eslint/js');
 const { default: babelEslintParser } = await importEslintTool('@babel/eslint-parser');
 const babelPluginSyntaxImportSource = resolveEslintTool('@babel/plugin-syntax-import-source');
+const babelPluginImportDefer = resolveEslintTool('@babel/plugin-syntax-import-defer');
 const { default: jsdoc } = await importEslintTool('eslint-plugin-jsdoc');
+const { default: regexpPlugin } = await importEslintTool('eslint-plugin-regexp');
 const { default: markdown } = await importEslintTool('@eslint/markdown');
 const { default: stylisticJs } = await importEslintTool('@stylistic/eslint-plugin');
 
@@ -72,6 +74,7 @@ export default [
     //   // Filtering tsc output files (i.e. if there a foo.ts, we ignore foo.js):
     //   (f, _, files) => f.endsWith('js') && files.includes(f.replace(/(\.[cm]?)js$/, '$1ts')),
     // ),
+    '!test/fixtures/test-inspector-dom-storage.mjs',
     '!test/fixtures/test-runner',
     'test/fixtures/test-runner/*',
     '!test/fixtures/test-runner/output',
@@ -87,6 +90,7 @@ export default [
   // #region general config
   js.configs.recommended,
   jsdoc.configs['flat/recommended'],
+  regexpPlugin.configs.recommended,
   {
     files: ['**/*.js'],
     languageOptions: {
@@ -111,6 +115,7 @@ export default [
         babelOptions: {
           plugins: [
             babelPluginSyntaxImportSource,
+            babelPluginImportDefer,
           ],
         },
         requireConfigFile: false,
@@ -137,6 +142,7 @@ export default [
         Float16Array: 'readonly',
         FormData: 'readonly',
         navigator: 'readonly',
+        QuotaExceededError: 'readonly',
         ReadableStream: 'readonly',
         ReadableStreamDefaultReader: 'readonly',
         ReadableStreamBYOBReader: 'readonly',
@@ -285,6 +291,42 @@ export default [
       'jsdoc/reject-any-type': 'off',
       'jsdoc/reject-function-type': 'off',
 
+      // RegExp recommended rules that we disable.
+      // Todo: Investigate which rules should be enabled.
+      'prefer-regex-literals': 'off',
+      'regexp/control-character-escape': 'off',
+      'regexp/match-any': 'off',
+      'regexp/negation': 'off',
+      'regexp/no-contradiction-with-assertion': 'off',
+      'regexp/no-dupe-characters-character-class': 'off',
+      'regexp/no-dupe-disjunctions': 'off',
+      'regexp/no-empty-alternative': 'off',
+      'regexp/no-legacy-features': 'off',
+      'regexp/no-misleading-capturing-group': 'off',
+      'regexp/no-obscure-range': 'off',
+      'regexp/no-potentially-useless-backreference': 'off',
+      'regexp/no-super-linear-backtracking': 'off',
+      'regexp/no-trivially-nested-quantifier': 'off',
+      'regexp/no-unused-capturing-group': 'off',
+      'regexp/no-useless-assertions': 'off',
+      'regexp/no-useless-character-class': 'off',
+      'regexp/no-useless-escape': 'off',
+      'regexp/no-useless-flag': 'off',
+      'regexp/no-useless-lazy': 'off',
+      'regexp/no-useless-non-capturing-group': 'off',
+      'regexp/no-useless-quantifier': 'off',
+      'regexp/no-useless-range': 'off',
+      'regexp/optimal-lookaround-quantifier': 'off',
+      'regexp/optimal-quantifier-concatenation': 'off',
+      'regexp/prefer-character-class': 'off',
+      'regexp/prefer-d': 'off',
+      'regexp/prefer-question-quantifier': 'off',
+      'regexp/prefer-star-quantifier': 'off',
+      'regexp/prefer-w': 'off',
+      'regexp/sort-flags': 'off',
+      'regexp/strict': 'off',
+      'regexp/use-ignore-case': 'off',
+
       // Stylistic rules.
       '@stylistic/js/arrow-parens': 'error',
       '@stylistic/js/arrow-spacing': 'error',
@@ -365,6 +407,7 @@ export default [
   // #region markdown config
   {
     files: ['**/*.md'],
+    ignores: ['CLAUDE.md', 'AGENTS.md'],
     plugins: {
       markdown,
     },

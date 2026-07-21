@@ -1134,17 +1134,29 @@ function formatValue(ctx, value, recurseTimes, typedArray) {
 
   // Memorize the context for custom inspection on proxies.
   const context = value;
+  let proxies = 0;
   // Always check for proxies to prevent side effects and to prevent triggering
   // any proxy handlers.
-  const proxy = getProxyDetails(value, !!ctx.showProxy);
+  let proxy = getProxyDetails(value, !!ctx.showProxy);
   if (proxy !== undefined) {
-    if (proxy === null || proxy[0] === null) {
-      return ctx.stylize('<Revoked Proxy>', 'special');
-    }
     if (ctx.showProxy) {
+      if (proxy[0] === null) {
+        return ctx.stylize('<Revoked Proxy>', 'special');
+      }
       return formatProxy(ctx, proxy, recurseTimes);
     }
-    value = proxy;
+    do {
+      if (proxy === null) {
+        let formatted = ctx.stylize('<Revoked Proxy>', 'special');
+        for (let i = 0; i < proxies; i++) {
+          formatted = `${ctx.stylize('Proxy(', 'special')}${formatted}${ctx.stylize(')', 'special')}`;
+        }
+        return formatted;
+      }
+      value = proxy;
+      proxy = getProxyDetails(value, false);
+      proxies += 1;
+    } while (proxy !== undefined);
   }
 
   // Provide a hook for user-specified inspect functions.
@@ -1160,7 +1172,7 @@ function formatValue(ctx, value, recurseTimes, typedArray) {
       // a counter internally.
       const depth = ctx.depth === null ? null : ctx.depth - recurseTimes;
       const isCrossContext =
-        proxy !== undefined || !FunctionPrototypeSymbolHasInstance(Object, context);
+        proxies !== 0 || !FunctionPrototypeSymbolHasInstance(Object, context);
       const ret = FunctionPrototypeCall(
         maybeCustom,
         context,
@@ -1196,7 +1208,15 @@ function formatValue(ctx, value, recurseTimes, typedArray) {
     return ctx.stylize(`[Circular *${index}]`, 'special');
   }
 
-  return formatRaw(ctx, value, recurseTimes, typedArray);
+  let formatted = formatRaw(ctx, value, recurseTimes, typedArray);
+
+  if (proxies !== 0) {
+    for (let i = 0; i < proxies; i++) {
+      formatted = `${ctx.stylize('Proxy(', 'special')}${formatted}${ctx.stylize(')', 'special')}`;
+    }
+  }
+
+  return formatted;
 }
 
 function formatRaw(ctx, value, recurseTimes, typedArray) {
@@ -1875,9 +1895,15 @@ function markNodeModules(ctx, line) {
     tempLine += StringPrototypeSlice(line, lastPos, moduleStart);
 
     let moduleEnd = StringPrototypeIndexOf(line, separator, moduleStart);
-    if (line[moduleStart] === '@') {
+    if (moduleEnd === -1) {
+      // No trailing separator: the module name runs to the end of the line.
+      moduleEnd = line.length;
+    } else if (line[moduleStart] === '@') {
       // Namespaced modules have an extra slash: @namespace/package
       moduleEnd = StringPrototypeIndexOf(line, separator, moduleEnd + 1);
+      if (moduleEnd === -1) {
+        moduleEnd = line.length;
+      }
     }
 
     const nodeModule = StringPrototypeSlice(line, moduleStart, moduleEnd);
@@ -2190,11 +2216,12 @@ function addNumericSeparatorEnd(integerString) {
 const remainingText = (remaining) => `... ${remaining} more item${remaining > 1 ? 's' : ''}`;
 
 function formatNumber(fn, number, numericSeparator) {
+  // Format -0 as '-0'. Checking `number === -0` won't distinguish 0 from -0.
+  // String(-0) === '0', so this must be checked before any String() conversion.
+  if (ObjectIs(number, -0)) {
+    return fn('-0', 'number');
+  }
   if (!numericSeparator) {
-    // Format -0 as '-0'. Checking `number === -0` won't distinguish 0 from -0.
-    if (ObjectIs(number, -0)) {
-      return fn('-0', 'number');
-    }
     return fn(`${number}`, 'number');
   }
 
@@ -2207,7 +2234,7 @@ function formatNumber(fn, number, numericSeparator) {
     }
     return fn(addNumericSeparator(numberString), 'number');
   }
-  if (NumberIsNaN(number)) {
+  if (NumberIsNaN(number) || StringPrototypeIncludes(numberString, 'e')) {
     return fn(numberString, 'number');
   }
 
@@ -2707,7 +2734,7 @@ function hasBuiltInToString(value) {
     if (proxyTarget === null) {
       return true;
     }
-    value = proxyTarget;
+    return hasBuiltInToString(proxyTarget);
   }
 
   let hasOwnToString = ObjectPrototypeHasOwnProperty;

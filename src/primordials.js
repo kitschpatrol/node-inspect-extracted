@@ -201,6 +201,7 @@ function copyPrototype(src, dest, prefix) {
   'Int16Array',
   'Int32Array',
   'Int8Array',
+  // 'Iterator',
   'Map',
   'Number',
   'Object',
@@ -230,10 +231,10 @@ function copyPrototype(src, dest, prefix) {
 });
 
 
-// Create copies of intrinsic objects that require a valid `this` to call
-// static methods.
-// Refs: https://www.ecma-international.org/ecma-262/#sec-promise.all
+// Create copies of intrinsic objects whose static methods require the
+// constructor to be passed as the receiver.
 [
+  // Refs: https://tc39.es/ecma-262/#sec-promise.all
   'Promise',
 ].forEach((name) => {
   const original = globalThis[name];
@@ -243,25 +244,68 @@ function copyPrototype(src, dest, prefix) {
 });
 
 // Create copies of abstract intrinsic objects that are not directly exposed
-// on the global object.
-// Refs: https://tc39.es/ecma262/#sec-%typedarray%-intrinsic-object
+// on the global object, and whose static methods require a valid subclass
+// constructor to be passed as the receiver.
 [
+  // Refs: https://tc39.es/ecma262/#sec-%typedarray%-intrinsic-object
   { name: 'TypedArray', original: Reflect.getPrototypeOf(Uint8Array) },
-  { name: 'ArrayIterator', original: {
-    prototype: Reflect.getPrototypeOf(Array.prototype[Symbol.iterator]()),
-  } },
-  { name: 'StringIterator', original: {
-    prototype: Reflect.getPrototypeOf(String.prototype[Symbol.iterator]()),
-  } },
 ].forEach(({ name, original }) => {
   primordials[name] = original;
-  // The static %TypedArray% methods require a valid `this`, but can't be bound,
-  // as they need a subclass constructor as the receiver:
   copyPrototype(original, primordials, name);
   copyPrototype(original.prototype, primordials, `${name}Prototype`);
 });
 
-primordials.IteratorPrototype = Reflect.getPrototypeOf(primordials.ArrayIteratorPrototype);
+// Create copies of abstract intrinsic prototypes that are not directly exposed
+// on the global object and which do not have corresponding constructors.
+[
+  {
+    name: 'ArrayIteratorPrototype',
+    original: Reflect.getPrototypeOf(Array.prototype[Symbol.iterator]()),
+  },
+  {
+    name: 'AsyncFunctionPrototype',
+    original: Reflect.getPrototypeOf(async function() {}),
+  },
+  {
+    name: 'AsyncGeneratorFunctionPrototype',
+    original: Reflect.getPrototypeOf(async function*() {}),
+  },
+  {
+    name: 'AsyncIteratorPrototype',
+    original: Reflect.getPrototypeOf(Reflect.getPrototypeOf(async function*() {}).prototype),
+  },
+  {
+    name: 'GeneratorFunctionPrototype',
+    original: Reflect.getPrototypeOf(function*() {}),
+  },
+  // {
+  //   name: 'IteratorHelperPrototype',
+  //   original: Reflect.getPrototypeOf(primordials.IteratorPrototypeDrop({ __proto__: null }, null)),
+  // },
+  {
+    name: 'MapIteratorPrototype',
+    original: Reflect.getPrototypeOf(new primordials.Map()[Symbol.iterator]()),
+  },
+  {
+    name: 'RegExpStringIteratorPrototype',
+    original: Reflect.getPrototypeOf(primordials.RegExp.prototype[Symbol.matchAll]()),
+  },
+  {
+    name: 'SetIteratorPrototype',
+    original: Reflect.getPrototypeOf(new primordials.Set()[Symbol.iterator]()),
+  },
+  {
+    name: 'StringIteratorPrototype',
+    original: Reflect.getPrototypeOf(String.prototype[Symbol.iterator]()),
+  },
+  // {
+  //   name: 'WrapForValidIteratorPrototype',
+  //   original: Reflect.getPrototypeOf(primordials.IteratorFrom({ __proto__: null })),
+  // },
+].forEach(({ name, original }) => {
+  primordials[name] = original;
+  copyPrototype(original, primordials, name);
+});
 
 const {
   // Array: ArrayConstructor,
@@ -363,22 +407,18 @@ const copyProps = (src, dest) => {
 /**
  * @type {typeof primordials.makeSafe}
  */
-const makeSafe = (unsafe, safe) => {
-  if (SymbolIterator in unsafe.prototype) {
+const makeSafe = (unsafe, safe, next) => {
+  if (next) {
     const dummy = new unsafe();
-    let next; // We can reuse the same `next` method.
-
     ArrayPrototypeForEach(ReflectOwnKeys(unsafe.prototype), (key) => {
       if (!ReflectGetOwnPropertyDescriptor(safe.prototype, key)) {
         const desc = ReflectGetOwnPropertyDescriptor(unsafe.prototype, key);
         if (
           typeof desc.value === 'function' &&
           desc.value.length === 0 &&
-          SymbolIterator in (FunctionPrototypeCall(desc.value, dummy) ?? {})
+          FunctionPrototypeCall(desc.value, dummy)?.next === next
         ) {
           const createIterator = uncurryThis(desc.value);
-          // @hildjj: support node 14.
-          next = next || uncurryThis(createIterator(dummy).next);
           const SafeIterator = createSafeIterator(createIterator, next);
           desc.value = function() {
             return new SafeIterator(this);
@@ -404,6 +444,7 @@ primordials.makeSafe = makeSafe;
 primordials.SafeMap = makeSafe(
   Map,
   class SafeMap extends Map {},
+  primordials.MapIteratorPrototypeNext,
 );
 primordials.SafeWeakMap = makeSafe(
   WeakMap,
@@ -413,6 +454,7 @@ primordials.SafeWeakMap = makeSafe(
 primordials.SafeSet = makeSafe(
   Set,
   class SafeSet extends Set {},
+  primordials.SetIteratorPrototypeNext,
 );
 primordials.SafeWeakSet = makeSafe(
   WeakSet,
@@ -450,13 +492,6 @@ primordials.SafeWeakRef = makeSafe(
 //       .finally(onFinally)
 //       .then(a, b),
 //   );
-
-primordials.AsyncIteratorPrototype =
-  // TODO(@hildjj): understand why node's primordials is wrong here.
-  // primordials.ReflectGetPrototypeOf(
-  primordials.ReflectGetPrototypeOf(
-    async function* () {}).prototype;
-// );
 
 // const arrayToSafePromiseIterable = (promises, mapFn) =>
 //   new primordials.SafeArrayIterator(
