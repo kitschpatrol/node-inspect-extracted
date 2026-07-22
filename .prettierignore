@@ -1,0 +1,22 @@
+# Prettier Ignore
+# Also respects .gitignore
+
+# @kitschpatrol/prettier-config boilerplate
+pnpm-lock.yaml
+
+# Customizations
+# Turn off for most files to preserve
+# upstream formatting...
+.c8rc
+.devcontainer/
+.ncurc
+eslint.config.mjs
+example-esm/
+example/
+index.mjs
+package.json
+src/
+test/
+tools/
+tsdown.config.mjs
+types/

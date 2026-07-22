@@ -1,13 +1,43 @@
 {
-  "name": "node-inspect-extracted",
+  "name": "@kitschpatrol/node-inspect-extracted",
   "version": "3.3.3",
-  "description": "Node's util.inspect, extracted for use on the Web",
-  "type": "commonjs",
+  "description": "Fork of node-inspect-extracted with ESM fixes.",
+  "keywords": [
+    "inspect",
+    "util",
+    "polyfill",
+    "format",
+    "output",
+    "npm-package"
+  ],
+  "homepage": "https://github.com/kitschpatrol/node-inspect-extracted",
+  "bugs": "https://github.com/kitschpatrol/node-inspect-extracted/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kitschpatrol/node-inspect-extracted.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Joe Hildebrand",
+    "email": "joe-github@cursive.net",
+    "url": "https://github.com/hildjj"
+  },
+  "contributors": [
+    {
+      "name": "Eric Mika",
+      "email": "eric@ericmika.com",
+      "url": "https://ericmika.com"
+    },
+    {
+      "name": "Noah May",
+      "email": "noahmouse2011@gmail.com"
+    },
+    {
+      "name": "Node.js contributors"
+    }
+  ],
   "sideEffects": false,
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "unpkg": "./dist/inspect.js",
-  "jsdelivr": "./dist/inspect.js",
+  "type": "commonjs",
   "exports": {
     ".": {
       "import": {
@@ -21,46 +51,34 @@
     },
     "./package.json": "./package.json"
   },
+  "main": "./dist/index.cjs",
+  "jsdelivr": "./dist/inspect.js",
+  "unpkg": "./dist/inspect.js",
+  "module": "./dist/index.mjs",
   "types": "./types/util.d.ts",
   "files": [
     "dist/",
     "types/"
   ],
   "scripts": {
-    "check": "node tools/check",
-    "lint": "eslint . && diff -q types/util.d.mts types/util.d.ts",
     "build": "tsdown",
-    "prepack": "npm run build",
-    "example": "vite --open /example/",
-    "example-esm": "vite --open /example-esm/",
-    "pretest": "npm run build",
-    "test": "node tools/runtests",
-    "pretest:all": "npm run build",
-    "test:all": "nve --arch ${NVE_ARCH:-`node -e 'console.log(process.arch)'`} -p 14.6.0,16,18,20,22,24,26 node tools/runtests",
+    "check": "node tools/check",
+    "ci": "c8 nve --arch ${NVE_ARCH:-`node -e 'console.log(process.arch)'`} --no-progress -c -p 14.6.0,16,18,20,22,24,26 node tools/runtests",
+    "clean": "rm -f pnpm-lock.yaml && git clean -fdX",
     "coverage": "c8 node tools/runtests",
+    "example-esm": "vite --open /example-esm/",
+    "example": "vite --open /example/",
+    "fix": "eslint . --fix && mdat && ksc-prettier fix",
+    "lint": "eslint . && mdat check --format && ksc-prettier lint && diff -q types/util.d.mts types/util.d.ts",
     "preci": "npm run build && npm run lint",
-    "ci": "c8 nve --arch ${NVE_ARCH:-`node -e 'console.log(process.arch)'`} --no-progress -c -p 14.6.0,16,18,20,22,24,26 node tools/runtests"
+    "prepack": "npm run build",
+    "pretest:all": "npm run build",
+    "pretest": "npm run build",
+    "release": "bumpp --preid fork --commit 'Release: %s' && pnpm build && NPM_AUTH_TOKEN=$(op read 'op://Personal/npm/token') pnpm publish --tag latest",
+    "test:all": "nve --arch ${NVE_ARCH:-`node -e 'console.log(process.arch)'`} -p 14.6.0,16,18,20,22,24,26 node tools/runtests",
+    "test:all-macos": "nve --arch ${NVE_ARCH:-`node -e 'console.log(process.arch)'`} -p 16,18,20,22,24,26 node tools/runtests",
+    "test": "node tools/runtests"
   },
-  "keywords": [
-    "inspect",
-    "util",
-    "polyfill",
-    "format",
-    "output",
-    "web",
-    "browserify"
-  ],
-  "homepage": "https://github.com/hildjj/node-inspect-extracted",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/hildjj/node-inspect-extracted.git"
-  },
-  "author": "Joe Hildebrand <joe-github@cursive.net>",
-  "contributors": [
-    "Noah May <noahmouse2011@gmail.com>",
-    "Eric Mika <eric@ericmika.com>"
-  ],
-  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^8.0.1",
     "@babel/eslint-parser": "^8.0.1",
@@ -68,17 +86,20 @@
     "@babel/plugin-syntax-import-source": "^8.0.1",
     "@eslint/js": "^10.0.1",
     "@eslint/markdown": "^8.0.3",
+    "@kitschpatrol/prettier-config": "^8.5.0",
     "@stylistic/eslint-plugin": "^5.10.0",
     "@stylistic/eslint-plugin-js": "^4.4.1",
-    "baseline-browser-mapping": "^2.11.0",
-    "eslint": "^10.7.0",
-    "eslint-plugin-jsdoc": "^63.2.0",
+    "baseline-browser-mapping": "^2.11.4",
+    "eslint": "^10.8.0",
+    "eslint-plugin-jsdoc": "^63.3.1",
     "eslint-plugin-regexp": "^3.1.1",
-    "globals": "^17.7.0",
+    "globals": "^17.8.0",
+    "mdat": "^3.0.0",
     "nve": "^18.0.3",
+    "bumpp": "^12.0.0",
     "semver": "^7.8.5",
     "superc8": "^12.7.0",
-    "tsdown": "^0.22.13",
+    "tsdown": "^0.22.14",
     "vite": "^8.1.5"
   },
   "packageManager": "pnpm@11.15.1",
@@ -91,5 +112,8 @@
       "version": "^22.18.0 || >=24.11.0",
       "onFail": "error"
     }
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

@@ -4,9 +4,9 @@
  * it:
  *
  * ```js
- * const util = require('node-inspect-extracted');
+ * const util = require('@kitschpatrol/node-inspect-extracted');
  * // or
- * import util from 'node-inspect-extracted';
+ * import util from '@kitschpatrol/node-inspect-extracted';
  * ```
  * @see [source](https://github.com/nodejs/node/blob/v17.6.0/lib/util.js)
  */
