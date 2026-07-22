@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<style>
+			body {
+				background-color: black;
+			}
+
+			pre {
+				color: white;
+			}
+		</style>
+		<script type="module">
+			import util from '../dist/index.mjs'
+
+			const pre = document.createElement('pre')
+
+			pre.innerHTML = util.inspect(
+				{
+					a: 1,
+					b: '<p>',
+					'&lt;': NaN,
+					[Symbol('<br>')]: false,
+					buf: new Uint8Array([1, 2, 3, 4]),
+				},
+				{
+					compact: false,
+					stylize: util.stylizeWithHTML,
+				},
+			)
+
+			document.body.appendChild(pre)
+		</script>
+	</head>
+	<body></body>
+</html>

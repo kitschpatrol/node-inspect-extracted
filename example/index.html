@@ -1,33 +1,34 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Document</title>
-  <script src="../dist/inspect.js"></script>
-  <style>
-body {
-  background-color: black;
-}
-pre {
-  color: white;
-}
-  </style>
-</head>
-<body>
-
-</body>
-<script>
-  const pre = document.createElement('pre');
-  pre.innerHTML = util.inspect({
-    a: 1,
-    b: '<p>',
-    '&lt;': NaN,
-    [Symbol('<br>')]: false,
-    buf: new Uint8Array([1, 2, 3, 4])
-  }, {
-    compact: false,
-    stylize: util.stylizeWithHTML
-  });
-  document.body.appendChild(pre);
-</script>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+    <script src="../dist/inspect.js"></script>
+    <style>
+      body {
+        background-color: black;
+      }
+      pre {
+        color: white;
+      }
+    </style>
+  </head>
+  <body></body>
+  <script>
+    const pre = document.createElement('pre');
+    pre.innerHTML = util.inspect(
+      {
+        a: 1,
+        b: '<p>',
+        '&lt;': NaN,
+        [Symbol('<br>')]: false,
+        buf: new Uint8Array([1, 2, 3, 4]),
+      },
+      {
+        compact: false,
+        stylize: util.stylizeWithHTML,
+      },
+    );
+    document.body.appendChild(pre);
+  </script>
 </html>

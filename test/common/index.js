@@ -413,7 +413,7 @@ if (hasSQLite) {
   knownGlobals.add(globalThis.sessionStorage);
 }
 
-const { Worker } = require('node:worker_threads');
+const { Worker } = require('worker_threads');
 knownGlobals.add(Worker);
 
 function allowGlobals(...allowlist) {

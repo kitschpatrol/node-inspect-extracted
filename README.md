@@ -3,10 +3,10 @@
 This library provides an as-faithful-as-possible implementation of Node.js's
 [`util.inspect`](https://nodejs.org/api/util.html#util_util_inspect_object_options) function.
 
-It was built in such a way that it can be kept up-to-date with node's
+It was built in such a way that it can be kept up-to-date with Node's
 [implementation](https://github.com/nodejs/node/blob/master/lib/internal/util/inspect.js),
-by taking the code directly from node's repo, and changing nothing but the
-`require()` statements.  All of the node built-in functions are emulated.
+by taking the code directly from Node's repo, and changing nothing but the
+`require()` statements. All of the Node.js built-in functions are emulated.
 Many of the incompatibilities generated from that emulation are not
 interesting for Web use cases.
 
@@ -18,7 +18,8 @@ npm install node-inspect-extracted
 
 ## Use
 
-This should work in node (for testing) and browsers, using either `require`, `import`, or as `window.Inspect` if you include this in your page as a script tag.
+This works in Node.js and browsers using either `require`, `import`, or the `util` global when
+included with a classic script tag.
 
 With `require`:
 
@@ -37,9 +38,18 @@ console.log(util.inspect(2));
 From the browser:
 
 ```html
-<script src="https://unpkg.com/node-inspect-extracted/dist/inspect.js"></script>
+<script src="./dist/inspect.js"></script>
 <script>
   console.log(util.inspect(3));
+</script>
+```
+
+Or as a browser module:
+
+```html
+<script type="module">
+  import util from './dist/index.mjs';
+  console.log(util.inspect(4));
 </script>
 ```
 
@@ -60,7 +70,7 @@ And these extras:
 ## Colors
 
 If you specify `{colors: true}` in the inspect options, you will get ANSI
-escape codes, just as you would in Node.  That's unlikely to be helpful to you
+escape codes, just as you would in Node. That's unlikely to be helpful to you
 on the Web, so you might want `stylizeWithHTML`, which is also exported from the package:
 
 ```mjs
@@ -80,7 +90,7 @@ which yields this ugly HTML:
 ```
 
 If you want better HTML, the [lightly-documented](https://nodejs.org/api/util.html#util_custom_inspection_functions_on_objects) `stylize` option requires
-a function that takes two parameters, a string, and a class name.  The mappings
+a function that takes two parameters, a string, and a class name. The mappings
 from class names to colors is in `inspect.styles`, so start with this:
 
 ```mjs
@@ -103,7 +113,7 @@ inspect({ a: 1 }, {
 - If you want your
    [`Proxy`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy)
    objects to have their internal object inspected, you may use the `Proxy`
-   constructor exported by this project.  That was done mostly for test coverage
+   constructor exported by this project. That was done mostly for test coverage
    purposes. It is not recommended for production code.
 - [`arguments`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments)
    objects are not treated specially.
@@ -111,13 +121,13 @@ inspect({ a: 1 }, {
 - Several of the existing type checks (corresponding to Node's
    [`util.types`](https://nodejs.org/api/util.html#util_util_types)) are
    weaker than the ones in Node, which has the freedom to use internal
-   capabilities of the runtime.  This means you can fake out the type
-   detection to get output different than node.
+   capabilities of the runtime. This means you can fake out the type
+   detection to get output different than Node.js.
    [[bug](https://github.com/hildjj/node-inspect-extracted/issues/2)]
 - Objects that have been mangled with `Object.setPrototypeOf`
    do not retain their original type information.
    [[bug](https://github.com/hildjj/node-inspect-extracted/issues/3)]
-- `Promise` state is not visible.  All Promises will show up as
+- `Promise` state is not visible. All Promises will show up as
    `Promise< pending >` no matter what state they are in.
 - `Map` and `Set` iterators will not show their internal state because that
    cannot be done from unprivileged code without modifying the iterator.
@@ -126,7 +136,7 @@ inspect({ a: 1 }, {
 - `WeakMap` and `WeakSet` will not show their contents, because those contents
    cannot be iterated over in unprivileged code.
 - Colorful stack traces are not completely accurate with respect to what
-   modules are Node-internal.  This doesn't matter on the Web.
+   modules are Node-internal. This doesn't matter on the Web.
 
 ## Developing
 
@@ -140,26 +150,29 @@ Check out NodeJS and this package next to one another:
 
 - `npm start` to build, run all tests and start an auto-refreshing web server
    to watch coverage change.
-- `npm run check` to see if there have been any changes to node that need to be integrated.
-- `npm run check -- -d` to see the diffs with node
+- `npm run check` to see if there have been any changes to Node.js that need to be integrated.
+- `npm run check -- -d` to see the diffs with Node.js
 - `npm run check -- -u` to indicate that we have merged the current changes
 
-Tests run mostly against the pre-webpack source at the moment, but there are
-some spot checks for the webpack output.
+Tests run mostly against the source at the moment, with spot checks for the
+bundled output.
 
 ## Supported Node.js versions
 
-This project only supports versions of Node that the Node team is [currently
-supporting](https://github.com/nodejs/Release#release-schedule).  Ava's
+This project only supports versions of Node.js that the Node team is [currently
+supporting](https://github.com/nodejs/Release#release-schedule). Ava's
 [support statement](https://github.com/avajs/ava/blob/master/docs/support-statement.md)
-is what we will be using as well.  Currently, that means Node `20`+ is
-required.  Older versions of node may work, but issues will not be fixed for them.
+is what we will be using as well. Currently, that means Node.js `22`+ is
+required. Older versions of Node.js may work, and test currently pass as far back as 
+Node.js `14.6.0`+, but issues will not be fixed for unsupported versions.
+
+
 
 ## LICENSE
 
 This code is an adaptation of the Node.js internal implementation, mostly from
 the file lib/internal/util/inspect.js, which does not have the Joyent
-copyright header.  The maintainers of this package will not assert copyright
+copyright header. The maintainers of this package will not assert copyright
 over this code, but will assign ownership to the Node.js contributors, with
 the same license as specified in the Node.js codebase; the portion adapted
 here should all be plain MIT license.

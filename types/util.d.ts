@@ -6,11 +6,10 @@
  * ```js
  * const util = require('node-inspect-extracted');
  * // or
- * import * as util from 'node-inspect-extracted';
+ * import util from 'node-inspect-extracted';
  * ```
  * @see [source](https://github.com/nodejs/node/blob/v17.6.0/lib/util.js)
  */
-declare module 'node-inspect-extracted' {
     export interface InspectOptions {
         /**
          * If set to `true`, getters are going to be
@@ -51,6 +50,10 @@ declare module 'node-inspect-extracted' {
         compact?: boolean | number | undefined;
         sorted?: boolean | ((a: string, b: string) => number) | undefined;
         numericSeparator?: boolean | undefined;
+        /**
+         * Write your own function for adding color to the output, or use one of the built-in stylize functions.
+         */
+        stylize?: ((text: string, styleType: Style) => string) | undefined;
     }
 
     // Not exposed from node's `util` package.
@@ -327,5 +330,16 @@ declare module 'node-inspect-extracted' {
      *
      * **Do not use in production code! Only use during testing.**
      */
-    export const Proxy: new <T>(target: T, handler: ProxyHandler<T>) => T;
-}
+    export const Proxy: new <T extends object>(target: T, handler: ProxyHandler<T>) => T;
+
+    declare const util: {
+        inspect: typeof inspect;
+        format: typeof format;
+        formatWithOptions: typeof formatWithOptions;
+        stripVTControlCharacters: typeof stripVTControlCharacters;
+        stylizeWithColor: typeof stylizeWithColor;
+        stylizeWithHTML: typeof stylizeWithHTML;
+        Proxy: typeof Proxy;
+    };
+
+    export default util;

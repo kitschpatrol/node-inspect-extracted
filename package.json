@@ -2,37 +2,44 @@
   "name": "node-inspect-extracted",
   "version": "3.3.3",
   "description": "Node's util.inspect, extracted for use on the Web",
-  "main": "./dist/inspect.js",
-  "module": "./index.mjs",
-  "browser": "./dist/inspect.js",
+  "type": "commonjs",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "unpkg": "./dist/inspect.js",
+  "jsdelivr": "./dist/inspect.js",
   "exports": {
-    "import": {
-      "types": "./types/util.d.mts",
-      "default": "./index.mjs"
+    ".": {
+      "import": {
+        "types": "./types/util.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./types/util.d.ts",
+        "default": "./dist/index.cjs"
+      }
     },
-    "require": {
-      "types": "./types/util.d.ts",
-      "default": "./dist/inspect.js"
-    }
+    "./package.json": "./package.json"
   },
   "types": "./types/util.d.ts",
   "files": [
     "dist/",
-    "types/",
-    "index.mjs"
+    "types/"
   ],
   "scripts": {
     "check": "node tools/check",
     "lint": "eslint . && diff -q types/util.d.mts types/util.d.ts",
-    "build": "webpack",
+    "build": "tsdown",
     "prepack": "npm run build",
+    "example": "vite --open /example/",
+    "example-esm": "vite --open /example-esm/",
     "pretest": "npm run build",
     "test": "node tools/runtests",
     "pretest:all": "npm run build",
-    "test:all": "nve --arch ${NVE_ARCH:-`node -e 'console.log(process.arch)'`} -p 14,16,18,20,22,24,25 node tools/runtests",
+    "test:all": "nve --arch ${NVE_ARCH:-`node -e 'console.log(process.arch)'`} -p 14.6.0,16,18,20,22,24,26 node tools/runtests",
     "coverage": "c8 node tools/runtests",
     "preci": "npm run build && npm run lint",
-    "ci": "c8 nve --arch ${NVE_ARCH:-`node -e 'console.log(process.arch)'`} --no-progress -c -p 14,16,18,20,22,24,26 node tools/runtests"
+    "ci": "c8 nve --arch ${NVE_ARCH:-`node -e 'console.log(process.arch)'`} --no-progress -c -p 14.6.0,16,18,20,22,24,26 node tools/runtests"
   },
   "keywords": [
     "inspect",
@@ -46,7 +53,7 @@
   "homepage": "https://github.com/hildjj/node-inspect-extracted",
   "repository": {
     "type": "git",
-    "url": "http://github.com/hildjj/node-inspect-extracted.git"
+    "url": "git+https://github.com/hildjj/node-inspect-extracted.git"
   },
   "author": "Joe Hildebrand <joe-github@cursive.net>",
   "contributors": [
@@ -59,12 +66,10 @@
     "@babel/eslint-parser": "^8.0.1",
     "@babel/plugin-syntax-import-defer": "^8.0.1",
     "@babel/plugin-syntax-import-source": "^8.0.1",
-    "@babel/preset-env": "^8.0.2",
     "@eslint/js": "^10.0.1",
     "@eslint/markdown": "^8.0.3",
     "@stylistic/eslint-plugin": "^5.10.0",
     "@stylistic/eslint-plugin-js": "^4.4.1",
-    "babel-loader": "^10.1.1",
     "baseline-browser-mapping": "^2.11.0",
     "eslint": "^10.7.0",
     "eslint-plugin-jsdoc": "^63.2.0",
@@ -73,11 +78,18 @@
     "nve": "^18.0.3",
     "semver": "^7.8.5",
     "superc8": "^12.7.0",
-    "webpack": "^5.108.4",
-    "webpack-cli": "^7.2.1"
+    "tsdown": "^0.22.13",
+    "vite": "^8.1.5"
   },
   "packageManager": "pnpm@11.15.1",
   "engines": {
-    "node": ">=14"
+    "node": ">=14.6.0"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "^22.18.0 || >=24.11.0",
+      "onFail": "error"
+    }
   }
 }
