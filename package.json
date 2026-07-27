@@ -1,6 +1,6 @@
 {
   "name": "@kitschpatrol/node-inspect-extracted",
-  "version": "3.3.3",
+  "version": "3.3.3-fork.1",
   "description": "Fork of node-inspect-extracted with ESM fixes.",
   "keywords": [
     "inspect",
