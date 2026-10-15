@@ -208,6 +208,9 @@ importers:
       eslint-plugin-regexp:
         specifier: ^3.3.1
         version: 3.3.1(eslint@10.12.0(jiti@2.7.0)(supports-color@10.2.2))
+      esutils:
+        specifier: ^2.0.3
+        version: 2.0.3
       globals:
         specifier: ^17.13.0
         version: 17.13.0
