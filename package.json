@@ -57,8 +57,8 @@
   "module": "./dist/index.mjs",
   "types": "./types/util.d.ts",
   "files": [
-    "dist/",
-    "types/"
+    "dist",
+    "types"
   ],
   "scripts": {
     "build": "tsdown",
@@ -86,7 +86,7 @@
     "@babel/plugin-syntax-import-source": "^8.0.1",
     "@eslint/js": "^10.0.1",
     "@eslint/markdown": "^8.0.3",
-    "@kitschpatrol/prettier-config": "^8.13.1",
+    "@kitschpatrol/prettier-config": "^8.14.0",
     "@stylistic/eslint-plugin": "^5.10.0",
     "@stylistic/eslint-plugin-js": "^4.4.1",
     "baseline-browser-mapping": "^2.11.27",
@@ -103,7 +103,7 @@
     "tsdown": "^0.23.0",
     "vite": "^8.3.3"
   },
-  "packageManager": "pnpm@12.11.2",
+  "packageManager": "pnpm@12.15.0",
   "engines": {
     "node": ">=14.6.0"
   },

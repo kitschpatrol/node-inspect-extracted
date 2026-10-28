@@ -2,6 +2,8 @@ auditConfig:
   ignoreGhsas:
     - GHSA-238p-pmpm-9mq7
     - GHSA-vfj7-8cjw-p6xm
+minimumReleaseAgeExclude:
+  - '@kitschpatrol/prettier-config@8.14.0'
 publicHoistPattern:
   - '@kitschpatrol/repo-config'
   - '@kitschpatrol/typescript-config'
