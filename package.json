@@ -74,7 +74,7 @@
     "prepack": "npm run build",
     "pretest:all": "npm run build",
     "pretest": "npm run build",
-    "release": "bumpp --preid fork --commit 'Release: %s' && pnpm build && NPM_TOKEN=$(op read 'op://Personal/npm/token') pnpm publish --tag latest",
+    "release": "bumpp --preid fork --commit 'Release: %s' && pnpm build && pnpm publish --tag latest --otp $(op item get npm --otp)",
     "test:all": "nve --arch ${NVE_ARCH:-`node -e 'console.log(process.arch)'`} -p 14.6.0,16,18,20,22,24,26 node tools/runtests",
     "test:all-macos": "nve --arch ${NVE_ARCH:-`node -e 'console.log(process.arch)'`} -p 16,18,20,22,24,26 node tools/runtests",
     "test": "node tools/runtests"
