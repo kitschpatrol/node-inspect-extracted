@@ -3,3 +3,5 @@ dist/
 node_modules/
 t.js
 .pnpm-store/
+/.claude
+/.agents

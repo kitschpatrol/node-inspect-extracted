@@ -85,6 +85,7 @@ export default [
     // ),
     '!test/fixtures/v8',
     '!test/fixtures/vm',
+    '**/changelog.md',
   ]),
   // #endregion
   // #region general config
