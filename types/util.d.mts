@@ -17,17 +17,42 @@
          * to be inspected. If set to `'set'` only getters having a corresponding
          * setter are going to be inspected. This might cause side effects depending on
          * the getter function.
-         * @default `false`
+         * @default false
          */
         getters?: 'get' | 'set' | boolean | undefined;
+        /**
+         * If `true`, object's non-enumerable symbols and properties are included in the formatted result.
+         * `WeakMap` and `WeakSet` entries are also included as well as user defined prototype properties (excluding method properties).
+         * @default false
+         */
         showHidden?: boolean | undefined;
         /**
+         * Specifies the number of times to recurse while formatting object.
+         * This is useful for inspecting large objects.
+         * To recurse up to the maximum call stack size pass `Infinity` or `null`.
          * @default 2
          */
         depth?: number | null | undefined;
+        /**
+         * If `true`, the output is styled with ANSI color codes. Colors are customizable.
+         */
         colors?: boolean | undefined;
+        /**
+         * If `false`, `[util.inspect.custom](depth, opts, inspect)` functions are not invoked.
+         * @default true
+         */
         customInspect?: boolean | undefined;
+        /**
+         * If `true`, `Proxy` inspection includes the target and handler objects.
+         * @default false
+         */
         showProxy?: boolean | undefined;
+        /**
+         * Specifies the maximum number of `Array`, `TypedArray`, `WeakMap`, and `WeakSet` elements
+         * to include when formatting. Set to `null` or `Infinity` to show all elements.
+         * Set to `0` or negative to show no elements.
+         * @default 100
+         */
         maxArrayLength?: number | null | undefined;
         /**
          * Specifies the maximum number of characters to
@@ -36,6 +61,12 @@
          * @default 10000
          */
         maxStringLength?: number | null | undefined;
+        /**
+         * The length at which input values are split across multiple lines.
+         * Set to `Infinity` to format the input as a single line
+         * (in combination with `compact` set to `true` or any number >= `1`).
+         * @default 80
+         */
         breakLength?: number | undefined;
         /**
          * Setting this to `false` causes each object key
@@ -45,10 +76,20 @@
          * `breakLength`. Short array elements are also grouped together. Note that no
          * text will be reduced below 16 characters, no matter the `breakLength` size.
          * For more information, see the example below.
-         * @default `true`
+         * @default true
          */
         compact?: boolean | number | undefined;
+        /**
+         * If set to `true` or a function, all properties of an object, and `Set` and `Map`
+         * entries are sorted in the resulting string.
+         * If set to `true` the default sort is used.
+         * If set to a function, it is used as a compare function.
+         */
         sorted?: boolean | ((a: string, b: string) => number) | undefined;
+        /**
+         * If set to `true`, an underscore is used to separate every three digits in all bigints and numbers.
+         * @default false
+         */
         numericSeparator?: boolean | undefined;
         /**
          * Write your own function for adding color to the output, or use one of the built-in stylize functions.
@@ -69,7 +110,7 @@
     }
     /**
      * The `util.format()` method returns a formatted string using the first argument
-     * as a `printf`\-like format string which can contain zero or more format
+     * as a `printf`-like format string which can contain zero or more format
      * specifiers. Each specifier is replaced with the converted value from the
      * corresponding argument. Supported specifiers are:
      *
@@ -80,7 +121,7 @@
      * // Returns: 'foo:%s'
      * ```
      *
-     * Values that are not part of the format string are formatted using`util.inspect()` if their type is not `string`.
+     * Values that are not part of the format string are formatted using `util.inspect()` if their type is not `string`.
      *
      * If there are more arguments passed to the `util.format()` method than the
      * number of specifiers, the extra arguments are concatenated to the returned
@@ -91,7 +132,7 @@
      * // Returns: 'foo:bar baz'
      * ```
      *
-     * If the first argument does not contain a valid format specifier, `util.format()`returns a string that is the concatenation of all arguments separated by spaces:
+     * If the first argument does not contain a valid format specifier, `util.format()` returns a string that is the concatenation of all arguments separated by spaces:
      *
      * ```js
      * util.format(1, 2, 3);
@@ -129,8 +170,9 @@
      * The `util.inspect()` method returns a string representation of `object` that is
      * intended for debugging. The output of `util.inspect` may change at any time
      * and should not be depended upon programmatically. Additional `options` may be
-     * passed that alter the result.`util.inspect()` will use the constructor's name and/or `@@toStringTag` to make
-     * an identifiable tag for an inspected value.
+     * passed that alter the result.
+     * `util.inspect()` will use the constructor's name and/or `Symbol.toStringTag`
+     * property to make an identifiable tag for an inspected value.
      *
      * ```js
      * class Foo {
@@ -226,11 +268,10 @@
      * // single line.
      * ```
      *
-     * The `showHidden` option allows [`WeakMap`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap) and
-     * [`WeakSet`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet) entries to be
+     * The `showHidden` option allows `WeakMap` and `WeakSet` entries to be
      * inspected. If there are more entries than `maxArrayLength`, there is no
-     * guarantee which entries are displayed. That means retrieving the same [`WeakSet`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet) entries twice may
-     * result in different output. Furthermore, entries
+     * guarantee which entries are displayed. That means retrieving the same
+     * `WeakSet` entries twice may result in different output. Furthermore, entries
      * with no remaining strong references may be garbage collected at any time.
      *
      * ```js
@@ -272,8 +313,29 @@
      * );
      * ```
      *
+     * The `numericSeparator` option adds an underscore every three digits to all
+     * numbers.
+     *
+     * ```js
+     * const { inspect } = require('util');
+     *
+     * const thousand = 1000;
+     * const million = 1000000;
+     * const bigNumber = 123456789n;
+     * const bigDecimal = 1234.12345;
+     *
+     * console.log(inspect(thousand, { numericSeparator: true }));
+     * // 1_000
+     * console.log(inspect(million, { numericSeparator: true }));
+     * // 1_000_000
+     * console.log(inspect(bigNumber, { numericSeparator: true }));
+     * // 123_456_789n
+     * console.log(inspect(bigDecimal, { numericSeparator: true }));
+     * // 1_234.123_45
+     * ```
+     *
      * `util.inspect()` is a synchronous method intended for debugging. Its maximum
-     * output length is approximately 128 MB. Inputs that result in longer output will
+     * output length is approximately 128 MiB. Inputs that result in longer output will
      * be truncated.
      * @since v0.3.0
      * @param object Any JavaScript primitive or `Object`.
